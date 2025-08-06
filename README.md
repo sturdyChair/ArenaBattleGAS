@@ -9,6 +9,8 @@
   1. [Game Ability System](#GameAbilitySystemGAS)
   2. [Ability System Component](#AbilitySystemComponentASC)
   3. [Gameplay Ability](#GameplayAbility)
+  4. [Attribute Set](#AttributeSet)
+  5. [Gameplay Effect](#GameplayEffect)
 
 ---
 ## GameAbilitySystem(GAS)    
@@ -62,14 +64,40 @@ void AABGASCharacterPlayer::GASInputPressed(int32 InputID){
 
 ## AttributeSet    
 
-
+```
+void UABCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+	......
+	if (GetHealth() <= 0.f && !bOutOfHealth){
+		Data.Target.AddLooseGameplayTag(ABTAG_CHARACTER_ISDEAD);
+		OnOutOfHealth.Broadcast();
+	}
+	bOutOfHealth = GetHealth() <= 0.f;
+}
+```
+> GameplayEffect 적용 이후 실행할 로직을 정의하는 PostGameplayEffectExecute, 체력이 0이 되었을 때 Delegate를 이용해 이벤트를 발생시킴
 
    - GAS에서 사용하는 캐릭터의 능력치 관련 구조체   
    - GameplayEffect에 의해 영향을 받음   
-   - AttributeSet에 담긴 각 Attribute에 대해, 변화 이전/이후에 실행할 로직을 정의할 수 있음   
-   - 
+   - AttributeSet에 담긴 각 Attribute에 대해, 변화 이전/이후에 실행할 로직을 정의할 수 있음
+   - 또한 GameplayEffect에 의한 영향 이전/이후에 실행할 로직을 정의할 수 있음
+
+---
+
+## GameplayEffect
+
+   - 지속 피해 / 회복, 버프, 디버프 등 일시적/영구적으로 상태를 변화시키는 기능을 함
+   - Instant : 상태변화가 딜레이 없이 즉시 적용되고 사라짐
+   - Duration : 상태변화가 일정시간동안 적용됨
+   - Infinite : 명시적으로 제거할 때까지 상태변화가 영구히 적용됨
+   - 주기를 설정할 수 있으며 각 주기마다 어떻게 동작할 지 정의할 수 있음
+   - Blueprint를 이용해 다양한 효과를 쉽게 구현할 수도 있음
+
+---
 
 
 
-   - Character - Notify, Character - UI, Character - Item 등 다양한 객체간 통신을 위해 사용   
+
+
 
