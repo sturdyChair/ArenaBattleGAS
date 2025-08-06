@@ -78,25 +78,54 @@ void UABCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 ```
 > GameplayEffect 적용 이후 실행할 로직을 정의하는 PostGameplayEffectExecute, 체력이 0이 되었을 때 Delegate를 이용해 이벤트를 발생시킴
 
-   - GAS에서 사용하는 캐릭터의 능력치 관련 구조체   
-   - GameplayEffect에 의해 영향을 받음   
-   - AttributeSet에 담긴 각 Attribute에 대해, 변화 이전/이후에 실행할 로직을 정의할 수 있음
-   - 또한 GameplayEffect에 의한 영향 이전/이후에 실행할 로직을 정의할 수 있음
+   - GAS에서 사용하는 캐릭터의 능력치 관련 구조체     
+   - GameplayEffect에 의해 영향을 받음     
+   - AttributeSet에 담긴 각 Attribute에 대해, 변화 이전/이후에 실행할 로직을 정의할 수 있음   
+   - 또한 GameplayEffect에 의한 영향 이전/이후에 실행할 로직을 정의할 수 있음   
 
 ---
 
-## GameplayEffect
+## GameplayEffect   
 
-   - 지속 피해 / 회복, 버프, 디버프 등 일시적/영구적으로 상태를 변화시키는 기능을 함
-   - Instant : 상태변화가 딜레이 없이 즉시 적용되고 사라짐
-   - Duration : 상태변화가 일정시간동안 적용됨
-   - Infinite : 명시적으로 제거할 때까지 상태변화가 영구히 적용됨
-   - 주기를 설정할 수 있으며 각 주기마다 어떻게 동작할 지 정의할 수 있음
-   - Blueprint를 이용해 다양한 효과를 쉽게 구현할 수도 있음
+   - 지속 피해 / 회복, 버프, 디버프 등 일시적/영구적으로 상태를 변화시키는 기능을 함   
+   - Instant : 상태변화가 딜레이 없이 즉시 적용되고 사라짐   
+   - Duration : 상태변화가 일정시간동안 적용됨   
+   - Infinite : 명시적으로 제거할 때까지 상태변화가 영구히 적용됨   
+   - 주기를 설정할 수 있으며 각 주기마다 어떻게 동작할 지 정의할 수 있음   
+   - Blueprint를 이용해 다양한 효과를 쉽게 구현할 수도 있음   
+
+---
+## AbilityTask
+```
+void UABAT_JumpAndWaitForLanding::Activate()
+{
+	Super::Activate();
+	ACharacter* Character = CastChecked<ACharacter>(GetAvatarActor());
+	Character->LandedDelegate.AddDynamic(this, &UABAT_JumpAndWaitForLanding::OnLandedCallback);
+	Character->Jump();
+	SetWaitingOnAvatar();
+}
+```
+> Character를 점프시키고 착지를 기다리는 Ability Task
+
+   - 주로 Ability에서 여러 프레임에 걸쳐 수행해야하는 동작을 실행해주는 역할을 함
+   - 혹은 재사용할 가능성이 있는 더 작은 단위의 동작을 구현함
+
+---
+## GameplayCue
+
+   - 비쥬얼 이펙트나 사운드 이펙트를 재생하는 역할을 함   
 
 ---
 
+## GameplayTag
 
+   - 직접 GAS 프레임워크에 속하지는 않지만 같이 사용할 경우 활용도가 매우 높음   
+   - 3단계의 계층구조를 지원하며 GameplayTag.ini에 저장됨   
+   - Tag를 통해 액터의 상태 제어, 이벤트 발생을 통한 Ability, GameplayCue 활성화 등에 활용 가능   
+   - 컴파일 없이 유연하게 기능을 변화시킬 수 있음   
+
+---
 
 
 
